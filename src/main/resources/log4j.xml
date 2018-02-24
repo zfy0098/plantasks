@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="%d{yyyy-MM-dd HH:mm:ss} %p [%l] - %m %n"/>
+        </layout>
+    </appender>
+
+    <!--DEBUG级别日志 按每小时滚动-->
+    <appender name="DEBUGFILE" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="/opt/sh/tradedata/log/debug.log"/>
+        <param name="DatePattern" value="yyyy-MM-dd-HH"/>
+        <param name="Append" value="true"/>
+        <param name="Threshold" value="DEBUG"/>
+	    <param name="Encoding" value="UTF-8"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss}^%c^%m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="DEBUG"/>
+            <param name="LevelMax" value="DEBUG"/>
+        </filter>
+    </appender>
+
+    <!--INFO级别日志 按每小时滚动-->
+    <appender name="INFOFILE" class="org.apache.log4j.DailyRollingFileAppender">
+        <!--日志文件位置-->
+        <param name="File" value="/opt/sh/tradedata/log/info.log"/>
+        <param name="DatePattern" value="yyyy-MM-dd-HH"/>
+        <param name="Append" value="true"/>
+        <param name="Threshold" value="INFO"/>
+	    <param name="Encoding" value="UTF-8"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss}^%c^%m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="INFO"/>
+            <param name="LevelMax" value="INFO"/>
+        </filter>
+    </appender>
+
+    <!--异步info级别日志-->
+    <appender name="ASYNCINFO" class="org.apache.log4j.AsyncAppender">
+        <param name="BufferSize" value="2048"/>
+        <appender-ref ref="INFOFILE"/>
+    </appender>
+
+
+    <!--ERROR级别日志,按文件大小滚动-->
+    <appender name="ERRORFILE" class="org.apache.log4j.RollingFileAppender">
+        <!--是否是追加模式-->
+        <param name="Append" value="true"/>
+        <!--每个日志文件的大小限制-->
+        <param name="MaxFileSize" value="30720KB"/>
+        <!--日志文件位置-->
+        <param name="File" value="/opt/sh/tradedata/log/error.log"/>
+        <!--最大日志文件数量，当文件数量超过此数字时，日期最早的文件将被覆盖-->
+        <param name="MaxBackupIndex" value="30"/>
+        <!--日志级别-->
+        <param name="Threshold" value="ERROR"/>
+        <param name="Encoding" value="UTF-8"/>
+        <!--日志输出格式-->
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss}^%c^%m%n"/>
+        </layout>
+        <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="ERROR"/>
+            <param name="LevelMax" value="ERROR"/>
+        </filter>
+
+    </appender>
+
+    <!--异步ERROR级别日志-->
+    <appender name="ASYNCERROR" class="org.apache.log4j.AsyncAppender">
+        <param name="BufferSize" value="10240"/>
+        <appender-ref ref="ERRORFILE"/>
+    </appender>
+
+
+    <logger name="org.apache">
+        <level value="warn"/>
+    </logger>
+    <logger name="com.mchange">
+        <level value="warn"/>
+    </logger>
+
+    <root>
+        <!--<level value="DEBUG"/>-->
+        <appender-ref ref="CONSOLE"/>
+        <!--<appender-ref ref="DEBUGFILE"/>-->
+        <appender-ref ref="ASYNCINFO"/>
+        <appender-ref ref="ASYNCERROR"/>
+
+    </root>
+
+</log4j:configuration>
