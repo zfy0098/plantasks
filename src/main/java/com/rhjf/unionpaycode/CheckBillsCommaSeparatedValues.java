@@ -100,7 +100,7 @@ public class CheckBillsCommaSeparatedValues extends OnlineBaseDao{
 
             List<Map<String,Object>> copyOrderList = queryForList(sql , null);
 
-            List<Object[]> list = new ArrayList<>();
+            List<Object[]> list = new ArrayList<>(50000);
 
             for (int j = 0 ; j < copyOrderList.size() ; j++){
 

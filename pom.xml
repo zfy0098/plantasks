@@ -10,6 +10,7 @@
 	<name>plantasks</name>
 	<url>http://maven.apache.org</url>
 
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		
@@ -46,6 +47,18 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
 		</dependency>
 
 
@@ -95,11 +108,7 @@
 			<artifactId>SADK</artifactId>
 			<version>3.2.1.3</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.3.2</version>
-		</dependency>
+
 		<!-- mnpay query require end -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
@@ -148,6 +157,23 @@
 			<version>2012_u6</version>
 		</dependency>
 
+
+
+		<dependency>
+			<groupId>com.rabbitmq</groupId>
+			<artifactId>amqp-client</artifactId>
+			<version>3.6.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>1.4.1</version>
+		</dependency>
+
+
+
 	</dependencies>
 
 	<build>
@@ -159,7 +185,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.rhjf.unionpaycode.CheckBills</mainClass>
+							<mainClass>com.rhjf.wypay.WyPayCheckBills</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

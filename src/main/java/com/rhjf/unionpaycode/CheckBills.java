@@ -66,9 +66,6 @@ public class CheckBills extends OnlineBaseDao {
         String cof = sbs.toString();
 
 
-
-
-
         InputStream inputStream;
         Integer insertNum = 0;
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -83,8 +80,7 @@ public class CheckBills extends OnlineBaseDao {
 
             log.info("dataBlock.length" + dataBlock.length);
 
-
-            List<Object[]> list = new ArrayList<>();
+            List<Object[]> list = new ArrayList<>(1000);
 
             for (int j = 0; j < dataBlock.length; j++) {
                 if (dataBlock[j] == null || dataBlock[j].length() == 0) {
@@ -167,14 +163,18 @@ public class CheckBills extends OnlineBaseDao {
                                 String cardType = strFive[3];
                                 String bankName = strFive[4];
 
+                                String trackingNo = strFive[9];
+
+
                                 Object[] obj = new Object[]{strFive[8], new BigDecimal(strFive[5]).setScale(2, BigDecimal.ROUND_HALF_UP),
-                                        datetime, new BigDecimal(strFive[6].substring(1)).setScale(2, BigDecimal.ROUND_HALF_UP), CHANNEL_ID, date,cardNo , cardType, bankName};
+                                        datetime, new BigDecimal(strFive[6].substring(1)).setScale(2, BigDecimal.ROUND_HALF_UP), CHANNEL_ID,
+                                        date,cardNo , cardType, bankName , trackingNo};
                                 list.add(obj);
 
                                 if (list.size() >= 1000) {
                                     String saveReconciliationSql = "insert into tbl_online_reconciliation "
-                                            + " ( optimistic ,bankorderid , trxAmount , trxDate , trxFee , channelName , dateFlag , cardno, cardtype , bankName) "
-                                            + " values (0 , ? , ? , ? , ? , ? , ?  , ? , ? , ?) ";
+                                            + " ( optimistic ,bankorderid , trxAmount , trxDate , trxFee , channelName , dateFlag , cardno, cardtype , bankName , unno) "
+                                            + " values (0 , ? , ? , ? , ? , ? , ?  , ? , ? , ? , ?) ";
 
                                     executeBatchSql(saveReconciliationSql, list);
                                     list.clear();
@@ -195,8 +195,8 @@ public class CheckBills extends OnlineBaseDao {
 
             if (list.size() > 0) {
                 String saveReconciliationSql = "insert into tbl_online_reconciliation "
-                        + " ( optimistic ,bankorderid , trxAmount , trxDate , trxFee , channelName , dateFlag , cardno, cardtype , bankName) "
-                        + " values (0 , ? , ? , ? , ? , ? , ?  , ? , ? , ?) ";
+                        + " ( optimistic ,bankorderid , trxAmount , trxDate , trxFee , channelName , dateFlag , cardno, cardtype , bankName , unno) "
+                        + " values (0 , ? , ? , ? , ? , ? , ?  , ? , ? , ? , ?) ";
 
                 executeBatchSql(saveReconciliationSql, list);
                 list.clear();
@@ -209,7 +209,6 @@ public class CheckBills extends OnlineBaseDao {
 
             sql = "update sequence_online_reconciliation set next_val=? ";
             executeSql(sql, new Object[]{maxID});
-
 
         } catch (Exception e) {
             log.info(e);
@@ -263,7 +262,8 @@ public class CheckBills extends OnlineBaseDao {
 
         String success = "update TBL_ONLINE_COPYORDER  as a ,  tbl_online_reconciliation  as b  " +
                 " set a.orderstatus='SUCCESS' , a.serialNumber = substr(a.bankOrderId , 23 , 12) , a.checkAmount = b.trxAmount ," +
-                " a.checkFee = b.trxFee , a.checkScanCodeStatus= 'SUCCESS' ,  a.channelId = b.channelName , a.cardNo=b.cardno , a.toibkn=b.cardtype , a.payerName=b.bankName " +
+                " a.checkFee = b.trxFee , a.checkScanCodeStatus= 'SUCCESS' ,  a.channelId = b.channelName , a.cardNo=b.cardno ," +
+                " a.toibkn=b.cardtype , a.payerName=b.bankName  , a.desciption=b.unno " +
                 " where SUBSTR(a.bankOrderId ,23,12)=b.bankOrderId and withdrawTime='"+date+"' and a.channelId='UNIONPAYQRCODE' and  date(b.dateFlag)=date('"+date+"') " +
                 " and a.orderStatus='SUCCESS' ";
 
@@ -276,17 +276,15 @@ public class CheckBills extends OnlineBaseDao {
 
             log.info("处理成功数据异常  ，  程序停止");
 
-            SendMail.sendMail("sql执行异常" , "sql执行异常" , new String[]{"zhoufangyu@ronghuijinfubj.com"} , null , null );
+            SendMail.sendMail("sql执行异常" , "sql执行异常" , new String[]{"zhoufangyu@ronghuijinfubj.com" ,  "zhangzhiguo@ronghuijinfubj.com"} , null , null );
 
             System.exit(1);
         }
 
-
-
         String dropOrder = "update TBL_ONLINE_COPYORDER  as a ,  tbl_online_reconciliation  as b " +
                 " set a.orderstatus='SUCCESS' ,  a.bankName='falg_fail', a.serialNumber = substr(a.bankOrderId , 23 , 12) , " +
                 " a.checkAmount = b.trxAmount , a.checkFee = b.trxFee , a.checkScanCodeStatus= 'SUCCESS' ,  a.channelId = b.channelName ," +
-                " a.cardNo=b.cardno , a.toibkn=b.cardtype , a.payerName=b.bankName " +
+                " a.cardNo=b.cardno , a.toibkn=b.cardtype , a.payerName=b.bankName , a.desciption=b.unno" +
                 " where SUBSTR(a.bankOrderId ,23,12)=b.bankOrderId and withdrawTime='"+date+"' and a.channelId='UNIONPAYQRCODE' and " +
                 " date(b.dateFlag)=date('"+date+"') and a.orderStatus='INIT' ";
 
@@ -295,21 +293,18 @@ public class CheckBills extends OnlineBaseDao {
 
         log.info("调单受影响行数:" + ret);
 
-
         if(ret < 0){
-
             log.info("处理调单数据异常 ， 程序停止");
 
-            SendMail.sendMail("sql执行异常" , "sql执行异常" , new String[]{"zhoufangyu@ronghuijinfubj.com"} , null , null );
+            SendMail.sendMail("sql执行异常" , "sql执行异常" , new String[]{"zhoufangyu@ronghuijinfubj.com" ,  "zhangzhiguo@ronghuijinfubj.com"} , null , null );
             System.exit(1);
         }
 
-
         String longData = "insert into tbl_online_copyorder  " +
                 " (bankOrderId , checkAmount , checkFee , checkScanCodeStatus , checkWithdrawStatus , cost , createDate , orderStatus , channelId ,payerFee ," +
-                " receiverFee , orderWithdrawAmount , orderWithdrawFee , t0PayResult, orderAmount , withdrawTime , mode , cardNo  , toibkn  , payerName )" +
+                " receiverFee , orderWithdrawAmount , orderWithdrawFee , t0PayResult, orderAmount , withdrawTime , mode , cardNo  , toibkn  , payerName , desciption )" +
                 " select bankOrderId , trxAmount , trxFee , 'LONG' , 'INIT' , 0 , trxDate , 'SUCCESS' ,  'UNIONPAYQRCODE' , 0 , 0 , 0 , 0 , 0  , 0 , '"+date+"' , 0  , cardno ," +
-                " cardtype , bankName"  +
+                " cardtype , bankName , unno"  +
                 " from tbl_online_reconciliation  where bankOrderId not in " +
                 " ( " +
                 " select SUBSTR(bankOrderId , 23,12) from  TBL_ONLINE_COPYORDER  where withdrawTime='"+date+"' and channelid='UNIONPAYQRCODE' " +
@@ -320,15 +315,12 @@ public class CheckBills extends OnlineBaseDao {
         ret = executeSql(longData , null);
         log.info("长款受影响行数：" + ret);
 
-
         if(ret < 0){
-
             log.info("处理长款数据异常 ， 程序停止");
 
-            SendMail.sendMail("sql执行异常" , "sql执行异常" , new String[]{"zhoufangyu@ronghuijinfubj.com"} , null , null );
+            SendMail.sendMail("sql执行异常" , "sql执行异常" , new String[]{"zhoufangyu@ronghuijinfubj.com" , "zhangzhiguo@ronghuijinfubj.com"} , null , null );
             System.exit(1);
         }
-
 
         String shortData = "update tbl_online_copyorder  set checkScanCodeStatus='SHORT'" +
                 "  where withdrawTime='"+date+"' and orderStatus='SUCCESS' and checkScanCodeStatus='INIT' and SUBSTR(bankOrderId , 23,12) not in " +
@@ -344,7 +336,7 @@ public class CheckBills extends OnlineBaseDao {
 
             log.info("处理长款数据异常  程序停止");
 
-            SendMail.sendMail("sql执行异常" , "sql执行异常" , new String[]{"zhoufangyu@ronghuijinfubj.com"} , null , null );
+            SendMail.sendMail("sql执行异常" , "sql执行异常" , new String[]{"zhoufangyu@ronghuijinfubj.com" ,  "zhangzhiguo@ronghuijinfubj.com"} , null , null );
             System.exit(1);
         }
 
@@ -357,7 +349,6 @@ public class CheckBills extends OnlineBaseDao {
         sql = "update sequence_online_copyorder set next_val=? ";
         executeSql(sql, new Object[]{maxid});
 
-
         sql = "delete from tbl_online_copyorder where bankName is null and orderStatus='INIT' and withdrawTime='"+date+"' " ;
         ret = executeSql(sql , null);
 
@@ -367,6 +358,8 @@ public class CheckBills extends OnlineBaseDao {
 
 
     public static void main(String[] args) {
+
+        Long startTime = System.currentTimeMillis();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Calendar c = Calendar.getInstance();
@@ -384,6 +377,10 @@ public class CheckBills extends OnlineBaseDao {
         checkBills.checkOrder();
 
         new CheckBillsCommaSeparatedValues(date);
+
+        Long endTime = System.currentTimeMillis();
+
+        System.out.println("本次对账使用时间：" + (endTime - startTime) / 1000.0 + " 秒");
 
     }
 }

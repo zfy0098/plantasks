@@ -25,7 +25,7 @@ public class UpdateMerchantBankInfo extends BaseDao{
         List<Map<String , Object>> bankInfoList = queryForList(sql , null);
 
 
-        List<Object[]> list = new ArrayList<>();
+        List<Object[]> list = new ArrayList<>(bankInfoList.size());
 
         for (int i = 0 ; i < onlineMerchantBankInfoList.size() ; i++){
 

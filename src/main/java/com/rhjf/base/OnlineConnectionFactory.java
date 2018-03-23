@@ -120,8 +120,4 @@ public class OnlineConnectionFactory {
         }
     }
 
-    public static void main(String[] args)
-    {
-        
-    }
 }

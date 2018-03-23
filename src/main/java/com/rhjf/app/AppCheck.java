@@ -26,9 +26,9 @@ public class AppCheck extends BaseDao {
 		String yesterday = DateUtil.getDateAgo(DateUtil.getNowTime(DateUtil.yyyy_MM_dd), 1, DateUtil.yyyy_MM_dd);
 
 		String copyOrderSql = "insert into tab_pay_copyorder "
-				+ " (ID , amount , tradedate,tradetime , termserno , tradetype,tradecode , userid,paychannel,feerate  ,merchantid , fee,ordernumber) "
-				+ " select ID , amount , tradedate,tradetime , termserno , tradetype,tradecode , userid,paychannel,feerate,merchantid, fee,ordernumber"
-				+ " from tab_pay_order where tradedate=? and PayRetCode='0000'";
+				+ " (ID , amount , tradedate,tradetime , termserno , tradetype,tradecode , userid, ChannelID ,paychannel,feerate  ,merchantid , fee,ordernumber) "
+				+ " select ID , amount , tradedate,tradetime , termserno , tradetype,tradecode , userid, ChannelID ,paychannel,feerate,merchantid, fee,ordernumber"
+				+ " from tab_pay_order where tradedate=? and PayRetCode='0000' ";
 		
 		executeSql(copyOrderSql, new Object[]{yesterday.replace("-", "")});
 		
@@ -78,30 +78,30 @@ public class AppCheck extends BaseDao {
 		}
 		executeBatchSql(saveReconciliation, list);
 		
-		/** 执行对账操作 **/
+		/* 执行对账操作 */
 		String checkSql = "update tab_pay_copyorder as tpc , tab_order_reconciliation as tor "
 				+ " set tpc.CheckAmount=tor.CheckAmount , tpc.CheckFee=tor.CheckFee , tpc.CheckStatus=tor.CheckOrderStatus , tpc.T0CheckStatus=tor.CheckWithdrawStatus"
-				+ " where tpc.OrderNumber=tor.OrderNumber and tor.TradeDate=?";
+				+ " where tpc.OrderNumber=tor.OrderNumber and tor.TradeDate=?  and tpc.ChannelID='RONGHUI'";
 		executeSql(checkSql, new Object[]{yesterday});
 		
 		
-		/** 处理长款数据  **/
+		/*处理长款数据  */
 		String longTradeSql = "insert into tab_pay_copyorder "
-				+ " (ID , amount , tradedate,tradetime , termserno , tradetype,tradecode   ,merchantid , fee,ordernumber , CheckAmount , CheckFee,CheckStatus,T0CheckStatus) "
-				+ " select   UPPER(UUID()) , 0 , ? , '' , '' , '' , '' , MerchantID ,0 , OrderNumber , CheckAmount , CheckFee , '1000' , '' "
+				+ " (ID , amount , tradedate,tradetime , termserno , tradetype,tradecode   ,merchantid , fee,ordernumber , CheckAmount , CheckFee,CheckStatus,T0CheckStatus , ChannelID) "
+				+ " select   UPPER(UUID()) , 0 , ? , '' , '' , '' , '' , MerchantID ,0 , OrderNumber , CheckAmount , CheckFee , '1000' , '' , 'RONGHUI' "
 				+ " from tab_order_reconciliation where OrderNumber not in (select OrderNumber from tab_pay_copyorder where TradeDate=?) and TradeDate=?";
 		executeSql(longTradeSql, new Object[]{yesterday.replace("-", "") , yesterday.replace("-", "") , yesterday});
 		
 		
 		String updateUserID = "update tab_pay_copyorder as tpco, tab_pay_order as tpo set tpco.userID = tpo.userID , tpco.PayChannel=tpo.payChannel "
-				+ "where  tpco.UserID is null";
+				+ "where  tpco.UserID is null and tpco=ChannelID='RONGHUI'";
 		
 		executeSql(updateUserID, null);
 	}
 
 	public static void main(String[] args) throws Exception {
 		AppCheck appCheck = new AppCheck();
-		appCheck.yichang();
+		appCheck.init();
 	}
 
 
@@ -156,14 +156,14 @@ public class AppCheck extends BaseDao {
 		}
 		executeBatchSql(saveReconciliation, list);
 
-		/** 执行对账操作 **/
+		/* 执行对账操作 */
 		String checkSql = "update tab_pay_copyorder as tpc , tab_order_reconciliation as tor "
 				+ " set tpc.CheckAmount=tor.CheckAmount , tpc.CheckFee=tor.CheckFee , tpc.CheckStatus=tor.CheckOrderStatus , tpc.T0CheckStatus=tor.CheckWithdrawStatus"
 				+ " where tpc.OrderNumber=tor.OrderNumber and tor.TradeDate=?";
 		executeSql(checkSql, new Object[]{yesterday});
 
 
-		/** 处理长款数据  **/
+		/* 处理长款数据  */
 		String longTradeSql = "insert into tab_pay_copyorder "
 				+ " (ID , amount , tradedate,tradetime , termserno , tradetype,tradecode   ,merchantid , fee,ordernumber , CheckAmount , CheckFee,CheckStatus,T0CheckStatus) "
 				+ " select   UPPER(UUID()) , 0 , ? , '' , '' , '' , '' , MerchantID ,0 , OrderNumber , CheckAmount , CheckFee , '1000' , '' "
