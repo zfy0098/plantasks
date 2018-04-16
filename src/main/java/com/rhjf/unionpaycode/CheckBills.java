@@ -4,10 +4,19 @@ import com.rhjf.base.OnlineBaseDao;
 import com.rhjf.email.SendMail;
 import com.rhjf.utils.MrAzuSplitUtil;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by hadoop on 2018/1/9.
@@ -47,7 +56,7 @@ public class CheckBills extends OnlineBaseDao {
             // 拼接文件路径
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "GBK"));
             // 读取文件
-            for (int i = 0; (tempLine = br.readLine()) != null; i++) {
+            while( (tempLine = br.readLine()) != null) {
                 fileList.add(tempLine);
             }
             br.close();
@@ -65,11 +74,7 @@ public class CheckBills extends OnlineBaseDao {
         }
         String cof = sbs.toString();
 
-
         InputStream inputStream;
-        Integer insertNum = 0;
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat sfd = new SimpleDateFormat("yyyyMMdd");
 
         try {
             inputStream = new ByteArrayInputStream(cof.getBytes("GBK"));
@@ -97,12 +102,6 @@ public class CheckBills extends OnlineBaseDao {
                 StringBuffer sbcreaDate = new StringBuffer();
                 //当前年
                 String thisYear = new SimpleDateFormat("yyyy").format(new Date());
-                //交易日期转码
-                SimpleDateFormat sdfForTranDate = new SimpleDateFormat("yyyyMMddHHmmss");
-                //交易日期年月日
-                SimpleDateFormat sdfForTranDateToDate = new SimpleDateFormat("yyyy-MM-dd");
-                //交易日期时分秒
-                SimpleDateFormat sdfForTranDateToTime = new SimpleDateFormat("HH:mm:ss");
                 log.info("第" + j + "个数据块的的条数" + gn.length);
 
 
@@ -150,6 +149,13 @@ public class CheckBills extends OnlineBaseDao {
                                     k++;
                                     continue;
                                 }
+
+
+                                if("0.00".equals(strFive[5])){
+                                    k++;
+                                    continue;
+                                }
+
 
                                 String transDate = strFive[1];
                                 String before = thisYear + "-" + transDate.substring(0, 4);

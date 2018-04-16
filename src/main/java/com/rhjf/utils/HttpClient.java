@@ -120,7 +120,7 @@ public class HttpClient {
 				.build();
 
 		HttpPost httppost = new HttpPost(callURL);
-		CloseableHttpClient httpClient = HttpClients.custom().setDefaultRequestConfig(config).build();// 设置进去
+		CloseableHttpClient httpClient = HttpClients.custom().setDefaultRequestConfig(config).build();
 
 		/** 頭信息 **/
 		if (header != null) {

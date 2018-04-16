@@ -120,10 +120,6 @@ public class FileTransferProtocol extends OnlineBaseDao {
 
             log.info("sql ： " + newSql + " , orderList.size()  :" + orderList.size());
 
-            String[] title = {"商户号", "订单号", "交易金额", "手续费", "创建时间"};
-
-            List<Object[]> orderListObj = new ArrayList<>(orderList.size());
-
             StringBuffer content = new StringBuffer("商户号|订单号|交易金额|手续费|创建时间" + "\r\n");
 
             for (int i = 0; i < orderList.size(); i++) {

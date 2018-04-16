@@ -31,6 +31,30 @@
 			<version>3.12</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.12</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml-schemas -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml-schemas</artifactId>
+			<version>3.12</version>
+		</dependency>
+
+
+		<!-- https://mvnrepository.com/artifact/org.apache.xmlbeans/xmlbeans -->
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+
+
+
 		<!-- mysql驱动包 -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -172,6 +196,33 @@
 			<version>1.4.1</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.8.3</version>
+		</dependency>
+
+<!--
+		<dependency>
+			<groupId>org.apache.hive</groupId>
+			<artifactId>hive-exec</artifactId>
+			<version>2.3.2</version>
+
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.hive</groupId>
+			<artifactId>hive-jdbc</artifactId>
+			<version>2.3.2</version>
+
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.hive</groupId>
+			<artifactId>hive-service</artifactId>
+			<version>2.3.2</version>
+		</dependency>-->
 
 
 	</dependencies>
@@ -185,7 +236,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.rhjf.wypay.WyPayCheckBills</mainClass>
+							<mainClass>com.rhjf.app.AppJIFUCheck</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
@@ -217,4 +268,29 @@
 			
 		</plugins>
 	</build>
+
+	<repositories>
+		<repository>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<id>public</id>
+			<name>public</name>
+			<url>http://111.207.6.230:38081/nexus/content/groups/public/</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<releases>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<id>public</id>
+			<name>public</name>
+			<url>http://111.207.6.230:38081/nexus/content/groups/public/</url>
+		</pluginRepository>
+	</pluginRepositories>
+
 </project>
