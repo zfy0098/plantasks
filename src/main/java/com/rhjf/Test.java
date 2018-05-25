@@ -1,17 +1,20 @@
 package com.rhjf;
 
-import com.rhjf.utils.AmountUtil;
-import net.sf.json.JSON;
-import net.sf.json.JSONObject;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Test {
 	
 
     public static void main(String[] args) {
 
-       String test = "{row-aa/colfam1=a/1523409594738/Put/vlen=1/mvcc=0}";
-       JSONObject json = JSONObject.fromObject(test);
-       System.out.println(json);
+      String qqTokenResult = "expires_in=7776000&access_token=5682BEBC8A435020F52C4FEEFE186008&refresh_token=E56B760F8FA620234723F706DFA29F49";
+
+        Matcher match = Pattern.compile("access_token" + "=([^&]*)").matcher(qqTokenResult);
+        if (match.find()) {
+            System.out.println(match.group().substring("access_token".length()+1));
+        }
+
     }
     
 

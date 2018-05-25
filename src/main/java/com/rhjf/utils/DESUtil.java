@@ -146,8 +146,6 @@ public class DESUtil {
 	
 	/**
 	 *   解密你要
-	 * @param key
-	 * @param keyIndex
 	 * @return
 	 * @throws Exception
 	 */

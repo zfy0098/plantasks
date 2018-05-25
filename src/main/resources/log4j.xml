@@ -11,7 +11,7 @@
     </appender>
 
     <!--DEBUG级别日志 按每小时滚动-->
-    <appender name="DEBUGFILE" class="org.apache.log4j.DailyRollingFileAppender">
+<!--    <appender name="DEBUGFILE" class="org.apache.log4j.DailyRollingFileAppender">
         <param name="File" value="/opt/sh/tradedata/log/debug.log"/>
         <param name="DatePattern" value="yyyy-MM-dd-HH"/>
         <param name="Append" value="true"/>
@@ -24,7 +24,7 @@
             <param name="LevelMin" value="DEBUG"/>
             <param name="LevelMax" value="DEBUG"/>
         </filter>
-    </appender>
+    </appender>-->
 
     <!--INFO级别日志 按每小时滚动-->
     <appender name="INFOFILE" class="org.apache.log4j.DailyRollingFileAppender">
@@ -81,10 +81,10 @@
     </appender>
 
 
-    <logger name="org.apache">
-        <level value="warn"/>
+   <logger name="org.apache">
+        <level value="DEBUGFILE"/>
     </logger>
-    <logger name="com.mchange">
+   <logger name="com.mchange">
         <level value="warn"/>
     </logger>
 
